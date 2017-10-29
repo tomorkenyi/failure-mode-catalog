@@ -10,5 +10,6 @@ scalaVersion := "2.12.4"
 libraryDependencies += guice
 libraryDependencies ++= Seq(
   javaJpa,
-  "org.hibernate" % "hibernate-entitymanager" % "5.2.12.Final"
+  "org.hibernate" % "hibernate-entitymanager" % "5.2.12.Final",
+  "com.h2database" % "h2" % "1.4.196"
 )
