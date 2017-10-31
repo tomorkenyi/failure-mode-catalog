@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;
 
+import static java.util.Objects.nonNull;
+import static java.util.Optional.*;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 @Singleton
@@ -37,12 +39,31 @@ public class JPAFailureModeRepository implements FailureModeRepository {
 
     @Override
     public CompletionStage<Optional<FailureMode>> get(Long id) {
-        return null;
+        return supplyAsync(() -> jpaApi.withTransaction(em -> {
+            FailureMode value = em.find(FailureMode.class, id);
+            return nonNull(value) ? of(value) : empty();
+        }), executionContext.current());
     }
 
     @Override
     public CompletionStage<Optional<FailureMode>> update(Long id, FailureMode failureMode) {
-        return null;
+        return supplyAsync(() -> jpaApi.withTransaction(em -> {
+            final FailureMode data = em.find(FailureMode.class, id);
+            if (data != null) {
+                data.setDetectability(failureMode.getDetectability());
+                data.setDetectFailures(failureMode.getDetectFailures());
+                data.setFunctionalState(failureMode.getFunctionalState());
+                data.setLastUpdated(failureMode.getLastUpdated());
+                data.setMitigation(failureMode.getMitigation());
+                data.setPlatformEffect(failureMode.getPlatformEffect());
+                data.setPotentialCause(failureMode.getPotentialCause());
+                data.setProbability(failureMode.getProbability());
+                data.setResponseAction(failureMode.getResponseAction());
+                data.setSafetyConcern(failureMode.getSafetyConcern());
+                data.setServiceEffect(failureMode.getServiceEffect());
+            }
+            return ofNullable(data);
+        }));
     }
 
     private Stream<FailureMode> select(EntityManager em) {

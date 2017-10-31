@@ -1,17 +1,17 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import model.FailureModeResource;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Results;
 import services.FailureModeService;
 
 import javax.inject.Inject;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.stream.Collectors.toList;
+import static util.FailureModeUtil.extractFailureModeResourceFromJson;
 
 public class FailureModeController extends Controller {
 
@@ -25,7 +25,7 @@ public class FailureModeController extends Controller {
     }
 
     public Result index() {
-        return TODO;
+        return ok("Home page");
     }
 
     public CompletionStage<Result> list() {
@@ -34,20 +34,21 @@ public class FailureModeController extends Controller {
         );
     }
 
+    public CompletionStage<Result> get(Long id) {
+        return service.findById(id).thenApplyAsync(optionalFailureModeResource ->
+                optionalFailureModeResource.map(resource -> ok(Json.toJson(resource))).orElseGet(Results::notFound));
+    }
+
     public CompletionStage<Result> create() {
-        JsonNode json = request().body().asJson();
-        final FailureModeResource resource = Json.fromJson(json, FailureModeResource.class);
-        return service.create(resource).thenApplyAsync(failureMode ->
+        return service.create(extractFailureModeResourceFromJson(request())).thenApplyAsync(failureMode ->
                 created(Json.toJson(failureMode)), executionContext.current()
         );
     }
 
-    public Result get(Long id) {
-        return TODO;
+    public CompletionStage<Result> update(Long id) {
+        return service.update(id, extractFailureModeResourceFromJson(request())).thenApplyAsync(optionalFailureMode ->
+                optionalFailureMode.map(failureMode -> ok(Json.toJson(failureMode))).orElseGet(Results::notFound));
     }
 
-    public Result update(Long id) {
-        return TODO;
-    }
 
 }
