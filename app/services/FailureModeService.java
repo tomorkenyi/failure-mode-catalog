@@ -1,7 +1,7 @@
 package services;
 
-import model.FailureMode;
-import model.FailureModeResource;
+import model.database.FailureMode;
+import model.presentation.FailureModeResource;
 import play.libs.concurrent.HttpExecutionContext;
 import repositories.FailureModeRepository;
 import util.FailureModeUtil;

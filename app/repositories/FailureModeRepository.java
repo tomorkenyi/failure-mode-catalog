@@ -1,6 +1,6 @@
 package repositories;
 
-import model.FailureMode;
+import model.database.FailureMode;
 
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;

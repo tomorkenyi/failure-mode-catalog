@@ -1,6 +1,16 @@
-package model;
+package model.database;
 
-public class FailureModeResource {
+import javax.persistence.*;
+import java.util.Collection;
+
+import static javax.persistence.GenerationType.AUTO;
+
+@Entity
+public class FailureMode {
+
+    @Id
+    @GeneratedValue(strategy = AUTO)
+    private Long id;
 
     private String functionalState;
 
@@ -22,8 +32,21 @@ public class FailureModeResource {
 
     private Boolean safetyConcern;
 
+//     TODO user entity later on
+//    private User creator;
+
+    @Version
+    private Long version;
+
     private Long lastUpdated;
 
+    @ManyToMany
+    private Collection<Tag> tags;
+
+
+    public Long getId() {
+        return id;
+    }
 
     public String getFunctionalState() {
         return functionalState;
@@ -105,11 +128,27 @@ public class FailureModeResource {
         this.safetyConcern = safetyConcern;
     }
 
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     public Long getLastUpdated() {
         return lastUpdated;
     }
 
     public void setLastUpdated(Long lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public Collection<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Collection<Tag> tags) {
+        this.tags = tags;
     }
 }

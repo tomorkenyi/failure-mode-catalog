@@ -1,18 +1,6 @@
-package model;
+package model.presentation;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Version;
-
-import static javax.persistence.GenerationType.AUTO;
-
-@Entity
-public class FailureMode {
-
-    @Id
-    @GeneratedValue(strategy = AUTO)
-    private Long id;
+public class FailureModeResource {
 
     private String functionalState;
 
@@ -34,21 +22,8 @@ public class FailureMode {
 
     private Boolean safetyConcern;
 
-//     TODO user entity later on
-//    private User creator;
-
-    @Version
-    private Long version;
-
     private Long lastUpdated;
 
-//    TODO tag entity later on
-//    private CollectionTable<Tag> tags;
-
-
-    public Long getId() {
-        return id;
-    }
 
     public String getFunctionalState() {
         return functionalState;
@@ -128,14 +103,6 @@ public class FailureMode {
 
     public void setSafetyConcern(Boolean safetyConcern) {
         this.safetyConcern = safetyConcern;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
     }
 
     public Long getLastUpdated() {

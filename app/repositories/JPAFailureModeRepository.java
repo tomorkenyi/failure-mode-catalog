@@ -1,6 +1,6 @@
 package repositories;
 
-import model.FailureMode;
+import model.database.FailureMode;
 import play.db.jpa.JPAApi;
 import play.libs.concurrent.HttpExecutionContext;
 

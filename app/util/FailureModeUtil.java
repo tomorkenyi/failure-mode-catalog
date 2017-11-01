@@ -1,7 +1,7 @@
 package util;
 
-import model.FailureMode;
-import model.FailureModeResource;
+import model.database.FailureMode;
+import model.presentation.FailureModeResource;
 import play.libs.Json;
 import play.mvc.Http;
 
