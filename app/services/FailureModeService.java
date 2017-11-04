@@ -1,6 +1,7 @@
 package services;
 
 import model.database.FailureMode;
+import model.database.Tag;
 import model.presentation.FailureModeResource;
 import play.libs.concurrent.HttpExecutionContext;
 import repositories.FailureModeRepository;
@@ -25,12 +26,18 @@ public class FailureModeService {
     }
 
     public CompletionStage<Stream<FailureModeResource>> findAll() {
-        return repository.list().thenApplyAsync(this::apply, executionContext.current());
+        return repository.list().thenApplyAsync(failureModeStream ->
+                failureModeStream.map(FailureModeUtil::initializeFailureModeResource), executionContext.current());
     }
 
     public CompletionStage<Optional<FailureModeResource>> findById(Long id) {
         return repository.get(id).thenApplyAsync(optionalFailureMode ->
                 optionalFailureMode.map(FailureModeUtil::initializeFailureModeResource), executionContext.current());
+    }
+
+    // TODO make that one optional too...
+    public CompletionStage<FailureMode> findFailureModeEntityById(Long id) {
+        return repository.get(id).thenApplyAsync(Optional::get);
     }
 
     public CompletionStage<FailureMode> create(FailureModeResource resource) {
@@ -41,8 +48,8 @@ public class FailureModeService {
         return repository.update(id, createFailureMode(resource));
     }
 
-    private Stream<FailureModeResource> apply(Stream<FailureMode> fms) {
-        return fms.map(FailureModeUtil::initializeFailureModeResource);
+    public CompletionStage<FailureMode> addTag(FailureMode failureMode, Tag tag) {
+        return repository.addTag(failureMode, tag);
     }
 
     private FailureMode createFailureMode(FailureModeResource resource) {
@@ -50,5 +57,4 @@ public class FailureModeService {
         updateFailureMode(resource, failureMode);
         return failureMode;
     }
-
 }

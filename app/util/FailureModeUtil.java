@@ -2,8 +2,12 @@ package util;
 
 import model.database.FailureMode;
 import model.presentation.FailureModeResource;
+import model.presentation.TagResource;
 import play.libs.Json;
 import play.mvc.Http;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FailureModeUtil {
 
@@ -20,7 +24,17 @@ public class FailureModeUtil {
         resource.setResponseAction(data.getResponseAction());
         resource.setSafetyConcern(data.getSafetyConcern());
         resource.setServiceEffect(data.getServiceEffect());
+        resource.setTags(getTagResourceStream(data).collect(Collectors.toList()));
         return resource;
+    }
+
+    private static Stream<TagResource> getTagResourceStream(FailureMode data) {
+        return data.getTags().stream().map(tag -> {
+            TagResource tagResource = new TagResource();
+            tagResource.setText(tag.getText());
+            tagResource.setColorCode(tag.getColorCode());
+            return tagResource;
+        });
     }
 
     public static void updateFailureMode(FailureModeResource resource, FailureMode failureMode) {

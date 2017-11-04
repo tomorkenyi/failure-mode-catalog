@@ -1,8 +1,11 @@
 package model.database;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.GenerationType.AUTO;
 
 @Entity
@@ -40,8 +43,16 @@ public class FailureMode {
 
     private Long lastUpdated;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Tag> tags;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {PERSIST, MERGE})
+    @JoinTable(name = "FailureModeTags",
+            joinColumns = {
+                    @JoinColumn(name = "failureMode_id", referencedColumnName = "id")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "tag_id", referencedColumnName = "id")
+            }
+    )
+    private List<Tag> tags = new ArrayList<>();
 
 
     public Long getId() {
@@ -144,11 +155,11 @@ public class FailureMode {
         this.lastUpdated = lastUpdated;
     }
 
-    public Collection<Tag> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(Collection<Tag> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 }

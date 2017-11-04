@@ -4,8 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.GenerationType.AUTO;
 
 @Entity
@@ -19,8 +22,8 @@ public class Tag {
 
     private String colorCode;
 
-    @ManyToMany(mappedBy = "tags")
-    private Collection<FailureMode> failureModes;
+    @ManyToMany(mappedBy = "tags", cascade = {PERSIST, MERGE})
+    private List<FailureMode> failureModes = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -42,11 +45,11 @@ public class Tag {
         this.colorCode = colorCode;
     }
 
-    public Collection<FailureMode> getFailureModes() {
+    public List<FailureMode> getFailureModes() {
         return failureModes;
     }
 
-    public void setFailureModes(Collection<FailureMode> failureMode) {
-        this.failureModes = failureMode;
+    public void setFailureModes(List<FailureMode> failureModes) {
+        this.failureModes = failureModes;
     }
 }

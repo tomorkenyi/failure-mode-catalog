@@ -1,12 +1,14 @@
 package repositories;
 
 import model.database.FailureMode;
+import model.database.Tag;
 import play.db.jpa.JPAApi;
 import play.libs.concurrent.HttpExecutionContext;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;
@@ -61,12 +63,28 @@ public class JPAFailureModeRepository implements FailureModeRepository {
                 data.setResponseAction(failureMode.getResponseAction());
                 data.setSafetyConcern(failureMode.getSafetyConcern());
                 data.setServiceEffect(failureMode.getServiceEffect());
+                data.setTags(failureMode.getTags());
             }
             return ofNullable(data);
         }));
     }
 
+    @Override
+    public CompletionStage<FailureMode> addTag(FailureMode failureMode, Tag tag) {
+        return supplyAsync(() -> jpaApi.withTransaction(em -> {
+            if (failureMode != null) {
+                List<Tag> tags = failureMode.getTags();
+                tags.add(tag);
+                failureMode.setTags(tags);
+                em.merge(failureMode);
+            }
+            return failureMode;
+        }));
+    }
+
     private Stream<FailureMode> select(EntityManager em) {
-        return em.createQuery("SELECT fm FROM FailureMode fm", FailureMode.class).getResultList().stream();
+        return em.createQuery(
+                "SELECT fm FROM FailureMode fm", FailureMode.class).
+                getResultList().stream();
     }
 }

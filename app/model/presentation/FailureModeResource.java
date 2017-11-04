@@ -1,5 +1,7 @@
 package model.presentation;
 
+import java.util.List;
+
 public class FailureModeResource {
 
     private String functionalState;
@@ -24,6 +26,7 @@ public class FailureModeResource {
 
     private Long lastUpdated;
 
+    private List<TagResource> tags;
 
     public String getFunctionalState() {
         return functionalState;
@@ -111,5 +114,13 @@ public class FailureModeResource {
 
     public void setLastUpdated(Long lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public List<TagResource> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<TagResource> tags) {
+        this.tags = tags;
     }
 }
