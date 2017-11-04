@@ -40,7 +40,7 @@ public class FailureMode {
 
     private Long lastUpdated;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Tag> tags;
 
 
