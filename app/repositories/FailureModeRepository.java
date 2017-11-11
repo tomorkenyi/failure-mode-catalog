@@ -17,6 +17,6 @@ public interface FailureModeRepository {
 
     CompletionStage<Optional<FailureMode>> update(Long id, FailureMode failureMode);
 
-    CompletionStage<FailureMode> addTag(FailureMode failureMode, Tag tag);
+    CompletionStage<FailureMode> addTag(Long id, Tag tag);
 
 }

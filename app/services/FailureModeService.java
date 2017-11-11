@@ -35,10 +35,6 @@ public class FailureModeService {
                 optionalFailureMode.map(FailureModeUtil::initializeFailureModeResource), executionContext.current());
     }
 
-    public CompletionStage<Optional<FailureMode>> findFailureModeEntityById(Long id) {
-        return repository.get(id);
-    }
-
     public CompletionStage<FailureMode> create(FailureModeResource resource) {
         return repository.create(createFailureMode(resource));
     }
@@ -47,8 +43,8 @@ public class FailureModeService {
         return repository.update(id, createFailureMode(resource));
     }
 
-    public CompletionStage<FailureMode> addTag(FailureMode failureMode, Tag tag) {
-        return repository.addTag(failureMode, tag);
+    public CompletionStage<FailureModeResource> addTag(Long id, Tag tag) {
+        return repository.addTag(id, tag).thenApplyAsync(FailureModeUtil::initializeFailureModeResource, executionContext.current());
     }
 
     private FailureMode createFailureMode(FailureModeResource resource) {

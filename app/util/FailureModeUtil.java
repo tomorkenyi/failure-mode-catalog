@@ -6,6 +6,8 @@ import model.presentation.TagResource;
 import play.libs.Json;
 import play.mvc.Http;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,6 +15,7 @@ public class FailureModeUtil {
 
     public static FailureModeResource initializeFailureModeResource(FailureMode data) {
         FailureModeResource resource = new FailureModeResource();
+        resource.setId(data.getId());
         resource.setDetectability(data.getDetectability());
         resource.setDetectFailures(data.getDetectFailures());
         resource.setFunctionalState(data.getFunctionalState());
@@ -33,8 +36,18 @@ public class FailureModeUtil {
             TagResource tagResource = new TagResource();
             tagResource.setText(tag.getText());
             tagResource.setColorCode(tag.getColorCode());
+            tagResource.setFailureModesIds(updatedFailureModesIds(tagResource.getFailureModesIds(), data.getId()));
             return tagResource;
         });
+    }
+
+    private static List<Long> updatedFailureModesIds(final List<Long> failureModesIds, final Long id) {
+        if (failureModesIds == null || failureModesIds.isEmpty()) {
+            return Collections.singletonList(id);
+        } else {
+            failureModesIds.add(id);
+        }
+        return failureModesIds;
     }
 
     public static void updateFailureMode(FailureModeResource resource, FailureMode failureMode) {

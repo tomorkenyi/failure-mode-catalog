@@ -43,14 +43,10 @@ public class FailureMode {
 
     private Long lastUpdated;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {PERSIST, MERGE})
+    @ManyToMany(cascade = {PERSIST, MERGE})
     @JoinTable(name = "FailureModeTags",
-            joinColumns = {
-                    @JoinColumn(name = "failureMode_id", referencedColumnName = "id")
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "tag_id", referencedColumnName = "id")
-            }
+            joinColumns = {@JoinColumn(name = "failureMode_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id", referencedColumnName = "id")}
     )
     private List<Tag> tags = new ArrayList<>();
 

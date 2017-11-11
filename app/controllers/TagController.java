@@ -1,7 +1,8 @@
 package controllers;
 
-import model.database.FailureMode;
 import model.database.Tag;
+import model.presentation.FailureModeResource;
+import play.Logger;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Result;
@@ -38,27 +39,33 @@ public class TagController {
 
     public CompletionStage<Result> create(Long failureModeId) {
         return failureModeService
-                .findFailureModeEntityById(failureModeId)
+                .findById(failureModeId)
                 .thenApplyAsync(createAndAddTag(), executionContext.current())
                 .thenComposeAsync(getResult(), executionContext.current());
     }
 
-    private Function<Optional<FailureMode>, CompletionStage<FailureMode>> createAndAddTag() {
-        return optionalFailureMode ->
-                optionalFailureMode.map(failureMode ->
+    private Function<Optional<FailureModeResource>, CompletionStage<FailureModeResource>> createAndAddTag() {
+        return optionalFailureModeResource ->
+                optionalFailureModeResource.map(failureModeResource ->
                         createTag().thenComposeAsync(
-                                addTag(failureMode))).orElseThrow(EntityNotFoundException::new);
+                                addTag(failureModeResource))).orElseThrow(EntityNotFoundException::new);
     }
 
     private CompletionStage<Tag> createTag() {
+        Logger.debug("Creating tag from request: " + request().body().asText());
         return tagService.create(extractTagResourceFromJson(request()));
     }
 
-    private Function<Tag, CompletionStage<FailureMode>> addTag(FailureMode failureMode) {
-        return tag -> failureModeService.addTag(failureMode, tag);
+    private Function<Tag, CompletionStage<FailureModeResource>> addTag(FailureModeResource failureModeResource) {
+        return tag -> {
+            Logger.debug("Add tag: " + tag + " to failure mode: " + failureModeResource);
+            return failureModeService.addTag(failureModeResource.getId(), tag);
+        };
     }
 
-    private Function<CompletionStage<FailureMode>, CompletionStage<Result>> getResult() {
-        return completionStage -> completionStage.thenApplyAsync(failureMode -> Results.created(Json.toJson(failureMode)));
+    private Function<CompletionStage<FailureModeResource>, CompletionStage<Result>> getResult() {
+        Logger.debug("Get the result of adding tag to failuremode and making a JSON response out of it");
+        return completionStage -> completionStage.thenApplyAsync(failureModeResource ->
+                Results.created(Json.toJson(failureModeResource)));
     }
 }

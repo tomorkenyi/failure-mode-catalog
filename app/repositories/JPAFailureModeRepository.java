@@ -43,6 +43,7 @@ public class JPAFailureModeRepository implements FailureModeRepository {
     public CompletionStage<Optional<FailureMode>> get(Long id) {
         return supplyAsync(() -> jpaApi.withTransaction(em -> {
             FailureMode value = em.find(FailureMode.class, id);
+            value.getTags().size();
             return nonNull(value) ? of(value) : empty();
         }), executionContext.current());
     }
@@ -70,8 +71,9 @@ public class JPAFailureModeRepository implements FailureModeRepository {
     }
 
     @Override
-    public CompletionStage<FailureMode> addTag(FailureMode failureMode, Tag tag) {
+    public CompletionStage<FailureMode> addTag(Long id, Tag tag) {
         return supplyAsync(() -> jpaApi.withTransaction(em -> {
+            FailureMode failureMode = em.find(FailureMode.class, id);
             if (failureMode != null) {
                 List<Tag> tags = failureMode.getTags();
                 tags.add(tag);
@@ -84,7 +86,7 @@ public class JPAFailureModeRepository implements FailureModeRepository {
 
     private Stream<FailureMode> select(EntityManager em) {
         return em.createQuery(
-                "SELECT fm FROM FailureMode fm", FailureMode.class).
+                "SELECT fm FROM FailureMode fm LEFT JOIN FETCH fm.tags", FailureMode.class).
                 getResultList().stream();
     }
 }

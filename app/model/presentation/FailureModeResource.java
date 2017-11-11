@@ -4,6 +4,8 @@ import java.util.List;
 
 public class FailureModeResource {
 
+    private Long id;
+
     private String functionalState;
 
     private String serviceEffect;
@@ -27,6 +29,14 @@ public class FailureModeResource {
     private Long lastUpdated;
 
     private List<TagResource> tags;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getFunctionalState() {
         return functionalState;
@@ -122,5 +132,23 @@ public class FailureModeResource {
 
     public void setTags(List<TagResource> tags) {
         this.tags = tags;
+    }
+
+    @Override
+    public String toString() {
+        return "FailureModeResource{" +
+                "functionalState='" + functionalState + '\'' +
+                ", serviceEffect='" + serviceEffect + '\'' +
+                ", platformEffect='" + platformEffect + '\'' +
+                ", potentialCause='" + potentialCause + '\'' +
+                ", probability=" + probability +
+                ", detectFailures='" + detectFailures + '\'' +
+                ", responseAction='" + responseAction + '\'' +
+                ", mitigation='" + mitigation + '\'' +
+                ", detectability=" + detectability +
+                ", safetyConcern=" + safetyConcern +
+                ", lastUpdated=" + lastUpdated +
+                ", tags=" + tags +
+                '}';
     }
 }
