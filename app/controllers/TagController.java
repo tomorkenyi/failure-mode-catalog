@@ -10,6 +10,8 @@ import services.FailureModeService;
 import services.TagService;
 
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
@@ -37,19 +39,26 @@ public class TagController {
     public CompletionStage<Result> create(Long failureModeId) {
         return failureModeService
                 .findFailureModeEntityById(failureModeId)
-                .thenApplyAsync(addTagStage(), executionContext.current())
-                .thenComposeAsync(getResultStage(), executionContext.current());
+                .thenApplyAsync(createAndAddTag(), executionContext.current())
+                .thenComposeAsync(getResult(), executionContext.current());
     }
 
-    private Function<FailureMode, CompletionStage<FailureMode>> addTagStage() {
-        return failureMode -> tagService.create(extractTagResourceFromJson(request())).thenComposeAsync(addTag(failureMode));
+    private Function<Optional<FailureMode>, CompletionStage<FailureMode>> createAndAddTag() {
+        return optionalFailureMode ->
+                optionalFailureMode.map(failureMode ->
+                        createTag().thenComposeAsync(
+                                addTag(failureMode))).orElseThrow(EntityNotFoundException::new);
+    }
+
+    private CompletionStage<Tag> createTag() {
+        return tagService.create(extractTagResourceFromJson(request()));
     }
 
     private Function<Tag, CompletionStage<FailureMode>> addTag(FailureMode failureMode) {
         return tag -> failureModeService.addTag(failureMode, tag);
     }
 
-    private Function<CompletionStage<FailureMode>, CompletionStage<Result>> getResultStage() {
+    private Function<CompletionStage<FailureMode>, CompletionStage<Result>> getResult() {
         return completionStage -> completionStage.thenApplyAsync(failureMode -> Results.created(Json.toJson(failureMode)));
     }
 }

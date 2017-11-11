@@ -35,9 +35,8 @@ public class FailureModeService {
                 optionalFailureMode.map(FailureModeUtil::initializeFailureModeResource), executionContext.current());
     }
 
-    // TODO make that one optional too...
-    public CompletionStage<FailureMode> findFailureModeEntityById(Long id) {
-        return repository.get(id).thenApplyAsync(Optional::get);
+    public CompletionStage<Optional<FailureMode>> findFailureModeEntityById(Long id) {
+        return repository.get(id);
     }
 
     public CompletionStage<FailureMode> create(FailureModeResource resource) {
