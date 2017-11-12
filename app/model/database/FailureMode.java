@@ -1,5 +1,7 @@
 package model.database;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +10,15 @@ import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.GenerationType.AUTO;
 
+@Data
 @Entity
+@NamedQueries({
+        @NamedQuery(name = FailureMode.FIND_BY_ID, query = "SELECT fm FROM FailureMode fm LEFT JOIN FETCH fm.tags WHERE fm.id = :pid"),
+        @NamedQuery(name = FailureMode.FIND_ALL, query = "SELECT fm FROM FailureMode fm LEFT JOIN FETCH fm.tags")
+})
 public class FailureMode {
+    public static final String FIND_BY_ID = "FailureMode.findById";
+    public static final String FIND_ALL = "FailureMode.findAll";
 
     @Id
     @GeneratedValue(strategy = AUTO)
@@ -35,9 +44,6 @@ public class FailureMode {
 
     private Boolean safetyConcern;
 
-//     TODO user entity later on
-//    private User creator;
-
     @Version
     private Long version;
 
@@ -51,111 +57,4 @@ public class FailureMode {
     private List<Tag> tags = new ArrayList<>();
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getFunctionalState() {
-        return functionalState;
-    }
-
-    public void setFunctionalState(String functionalState) {
-        this.functionalState = functionalState;
-    }
-
-    public String getServiceEffect() {
-        return serviceEffect;
-    }
-
-    public void setServiceEffect(String serviceEffect) {
-        this.serviceEffect = serviceEffect;
-    }
-
-    public String getPlatformEffect() {
-        return platformEffect;
-    }
-
-    public void setPlatformEffect(String platformEffect) {
-        this.platformEffect = platformEffect;
-    }
-
-    public String getPotentialCause() {
-        return potentialCause;
-    }
-
-    public void setPotentialCause(String potentialCause) {
-        this.potentialCause = potentialCause;
-    }
-
-    public Integer getProbability() {
-        return probability;
-    }
-
-    public void setProbability(Integer probability) {
-        this.probability = probability;
-    }
-
-    public String getDetectFailures() {
-        return detectFailures;
-    }
-
-    public void setDetectFailures(String detectFailures) {
-        this.detectFailures = detectFailures;
-    }
-
-    public String getResponseAction() {
-        return responseAction;
-    }
-
-    public void setResponseAction(String responseAction) {
-        this.responseAction = responseAction;
-    }
-
-    public String getMitigation() {
-        return mitigation;
-    }
-
-    public void setMitigation(String mitigation) {
-        this.mitigation = mitigation;
-    }
-
-    public Integer getDetectability() {
-        return detectability;
-    }
-
-    public void setDetectability(Integer detectability) {
-        this.detectability = detectability;
-    }
-
-    public Boolean getSafetyConcern() {
-        return safetyConcern;
-    }
-
-    public void setSafetyConcern(Boolean safetyConcern) {
-        this.safetyConcern = safetyConcern;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public Long getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(Long lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
 }

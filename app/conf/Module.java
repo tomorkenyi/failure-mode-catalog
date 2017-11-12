@@ -1,10 +1,10 @@
 package conf;
 
 import com.google.inject.AbstractModule;
-import repositories.FailureModeRepository;
-import repositories.JPAFailureModeRepository;
-import repositories.JPATagRepository;
-import repositories.TagRepository;
+import repository.FailureModeRepository;
+import repository.JPAFailureModeRepository;
+import repository.JPATagRepository;
+import repository.TagRepository;
 
 public class Module extends AbstractModule {
     @Override

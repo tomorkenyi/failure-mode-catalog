@@ -1,8 +1,8 @@
-package services;
+package service;
 
 import model.database.Tag;
 import model.presentation.TagResource;
-import repositories.TagRepository;
+import repository.TagRepository;
 
 import javax.inject.Inject;
 import java.util.concurrent.CompletionStage;

@@ -1,7 +1,12 @@
 package model.presentation;
 
+import lombok.Data;
+import lombok.ToString;
+
 import java.util.List;
 
+@Data
+@ToString
 public class TagResource {
 
     private String text;
@@ -10,27 +15,4 @@ public class TagResource {
 
     private List<Long> failureModesIds;
 
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getColorCode() {
-        return colorCode;
-    }
-
-    public void setColorCode(String colorCode) {
-        this.colorCode = colorCode;
-    }
-
-    public List<Long> getFailureModesIds() {
-        return failureModesIds;
-    }
-
-    public void setFailureModesIds(List<Long> failureModesIds) {
-        this.failureModesIds = failureModesIds;
-    }
 }

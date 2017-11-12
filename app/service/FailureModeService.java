@@ -1,10 +1,10 @@
-package services;
+package service;
 
 import model.database.FailureMode;
 import model.database.Tag;
 import model.presentation.FailureModeResource;
 import play.libs.concurrent.HttpExecutionContext;
-import repositories.FailureModeRepository;
+import repository.FailureModeRepository;
 import util.FailureModeUtil;
 
 import javax.inject.Inject;
@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;
 
+import static mapper.FailureModeMapper.INSTANCE;
 import static util.FailureModeUtil.updateFailureMode;
 
 public class FailureModeService {
@@ -26,12 +27,13 @@ public class FailureModeService {
     }
 
     public CompletionStage<Stream<FailureModeResource>> findAll() {
-        return repository.list().thenApplyAsync(failureModeStream ->
-                failureModeStream.map(FailureModeUtil::initializeFailureModeResource), executionContext.current());
+        return repository.findAll().thenApplyAsync(failureModeStream ->
+                        failureModeStream.map(failureMode -> INSTANCE.failureModeEntityToResource(failureMode)),
+                executionContext.current());
     }
 
     public CompletionStage<Optional<FailureModeResource>> findById(Long id) {
-        return repository.get(id).thenApplyAsync(optionalFailureMode ->
+        return repository.findById(id).thenApplyAsync(optionalFailureMode ->
                 optionalFailureMode.map(FailureModeUtil::initializeFailureModeResource), executionContext.current());
     }
 

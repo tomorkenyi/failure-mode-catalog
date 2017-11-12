@@ -1,4 +1,4 @@
-package repositories;
+package repository;
 
 import model.database.Tag;
 import play.db.jpa.JPAApi;

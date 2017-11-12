@@ -1,4 +1,4 @@
-package repositories;
+package repository;
 
 import model.database.FailureMode;
 import model.database.Tag;
@@ -8,6 +8,7 @@ import play.libs.concurrent.HttpExecutionContext;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
@@ -16,6 +17,8 @@ import java.util.stream.Stream;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.*;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static model.database.FailureMode.FIND_ALL;
+import static model.database.FailureMode.FIND_BY_ID;
 
 @Singleton
 public class JPAFailureModeRepository implements FailureModeRepository {
@@ -30,22 +33,18 @@ public class JPAFailureModeRepository implements FailureModeRepository {
     }
 
     @Override
-    public CompletionStage<Stream<FailureMode>> list() {
-        return supplyAsync(() -> jpaApi.withTransaction(this::select), executionContext.current());
+    public CompletionStage<Stream<FailureMode>> findAll() {
+        return supplyAsync(() -> jpaApi.withTransaction(this::selectAll), executionContext.current());
+    }
+
+    @Override
+    public CompletionStage<Optional<FailureMode>> findById(Long id) {
+        return supplyAsync(() -> jpaApi.withTransaction(em -> selectById(em, id)), executionContext.current());
     }
 
     @Override
     public CompletionStage<FailureMode> create(FailureMode failureMode) {
         return supplyAsync(() -> jpaApi.withTransaction(em -> em.merge(failureMode)), executionContext.current());
-    }
-
-    @Override
-    public CompletionStage<Optional<FailureMode>> get(Long id) {
-        return supplyAsync(() -> jpaApi.withTransaction(em -> {
-            FailureMode value = em.find(FailureMode.class, id);
-            value.getTags().size();
-            return nonNull(value) ? of(value) : empty();
-        }), executionContext.current());
     }
 
     @Override
@@ -84,9 +83,14 @@ public class JPAFailureModeRepository implements FailureModeRepository {
         }));
     }
 
-    private Stream<FailureMode> select(EntityManager em) {
-        return em.createQuery(
-                "SELECT fm FROM FailureMode fm LEFT JOIN FETCH fm.tags", FailureMode.class).
-                getResultList().stream();
+    private Stream<FailureMode> selectAll(EntityManager em) {
+        return em.createNamedQuery(FIND_ALL, FailureMode.class).getResultList().stream();
+    }
+
+    private Optional<FailureMode> selectById(EntityManager em, Long id) {
+        TypedQuery<FailureMode> typedQuery = em.createNamedQuery(FIND_BY_ID, FailureMode.class);
+        typedQuery.setParameter("pid", id);
+        FailureMode singleResult = typedQuery.getSingleResult();
+        return nonNull(singleResult) ? of(singleResult) : empty();
     }
 }

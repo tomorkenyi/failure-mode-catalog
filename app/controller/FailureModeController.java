@@ -1,11 +1,11 @@
-package controllers;
+package controller;
 
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
-import services.FailureModeService;
+import service.FailureModeService;
 
 import javax.inject.Inject;
 import java.util.concurrent.CompletionStage;
@@ -15,14 +15,11 @@ import static util.FailureModeUtil.extractFailureModeResourceFromJson;
 
 public class FailureModeController extends Controller {
 
-    private final FailureModeService service;
-    private final HttpExecutionContext executionContext;
+    @Inject
+    private FailureModeService service;
 
     @Inject
-    public FailureModeController(FailureModeService service, HttpExecutionContext executionContext) {
-        this.service = service;
-        this.executionContext = executionContext;
-    }
+    private HttpExecutionContext executionContext;
 
     public Result index() {
         return ok("Home page");
