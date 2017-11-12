@@ -1,4 +1,4 @@
-package repositories;
+package repository;
 
 import model.database.FailureMode;
 import model.database.Tag;
@@ -9,11 +9,11 @@ import java.util.stream.Stream;
 
 public interface FailureModeRepository {
 
-    CompletionStage<Stream<FailureMode>> list();
+    CompletionStage<Stream<FailureMode>> findAll();
+
+    CompletionStage<Optional<FailureMode>> findById(Long id);
 
     CompletionStage<FailureMode> create(FailureMode failureMode);
-
-    CompletionStage<Optional<FailureMode>> get(Long id);
 
     CompletionStage<Optional<FailureMode>> update(Long id, FailureMode failureMode);
 

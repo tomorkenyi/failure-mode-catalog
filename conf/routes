@@ -2,14 +2,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET         /                         controllers.FailureModeController.index
-GET         /failures                 controllers.FailureModeController.list
-POST        /failures                 controllers.FailureModeController.create
-GET         /failures/:id             controllers.FailureModeController.get(id: Long)
-POST        /failures/:id             controllers.FailureModeController.update(id: Long)
-POST        /failures/:id/tags        controllers.TagController.create(id: Long)
-GET         /_search                  controllers.TagController.search(tag)
-
-
-# Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file             controllers.Assets.versioned(path="/public", file: Asset)
+GET         /                         controller.FailureModeController.index
+GET         /failures                 controller.FailureModeController.list
+POST        /failures                 controller.FailureModeController.create
+GET         /failures/:id             controller.FailureModeController.get(id: Long)
+POST        /failures/:id             controller.FailureModeController.update(id: Long)
+POST        /failures/:id/tags        controller.TagController.create(id: Long)
+GET         /_search                  controller.TagController.search(tag)

@@ -1,20 +1,16 @@
-package services;
+package service;
 
 import model.database.Tag;
 import model.presentation.TagResource;
-import repositories.TagRepository;
+import repository.TagRepository;
 
 import javax.inject.Inject;
 import java.util.concurrent.CompletionStage;
 
 public class TagService {
 
-    private final TagRepository repository;
-
     @Inject
-    public TagService(TagRepository repository) {
-        this.repository = repository;
-    }
+    private TagRepository repository;
 
     public CompletionStage<Tag> create(TagResource resource) {
         Tag tag = new Tag();

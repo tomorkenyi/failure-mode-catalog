@@ -1,4 +1,4 @@
-package controllers;
+package controller;
 
 import model.database.Tag;
 import model.presentation.FailureModeResource;
@@ -7,8 +7,8 @@ import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Result;
 import play.mvc.Results;
-import services.FailureModeService;
-import services.TagService;
+import service.FailureModeService;
+import service.TagService;
 
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
@@ -21,16 +21,13 @@ import static util.TagUtil.extractTagResourceFromJson;
 
 public class TagController {
 
-    private final TagService tagService;
-    private final FailureModeService failureModeService;
-    private final HttpExecutionContext executionContext;
-
     @Inject
-    public TagController(TagService tagService, FailureModeService failureModeService, HttpExecutionContext executionContext) {
-        this.tagService = tagService;
-        this.failureModeService = failureModeService;
-        this.executionContext = executionContext;
-    }
+    private TagService tagService;
+    @Inject
+    private FailureModeService failureModeService;
+    @Inject
+    private HttpExecutionContext executionContext;
+
 
     public Result search(String tag) {
         return play.mvc.Results.TODO;

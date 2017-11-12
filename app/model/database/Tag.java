@@ -1,5 +1,8 @@
 package model.database;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,6 +14,8 @@ import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.GenerationType.AUTO;
 
+@Getter
+@Setter
 @Entity
 public class Tag {
 
@@ -25,31 +30,4 @@ public class Tag {
     @ManyToMany(mappedBy = "tags", cascade = {PERSIST, MERGE})
     private List<FailureMode> failureModes = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getColorCode() {
-        return colorCode;
-    }
-
-    public void setColorCode(String colorCode) {
-        this.colorCode = colorCode;
-    }
-
-    public List<FailureMode> getFailureModes() {
-        return failureModes;
-    }
-
-    public void setFailureModes(List<FailureMode> failureModes) {
-        this.failureModes = failureModes;
-    }
 }
