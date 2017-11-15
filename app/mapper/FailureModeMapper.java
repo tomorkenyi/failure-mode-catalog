@@ -1,18 +1,19 @@
 package mapper;
 
-import model.database.FailureMode;
-import model.presentation.FailureModeResource;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
+import model.database.FailureMode;
+import model.presentation.FailureModeResource;
 
 @Mapper
 public interface FailureModeMapper {
 
     FailureModeMapper INSTANCE = Mappers.getMapper(FailureModeMapper.class);
 
-    FailureModeResource failureModeEntityToResource(FailureMode failureMode);
+    FailureModeResource toFailureModeResource(FailureMode failureMode, @Context CycleAvoidingMappingContext context);
 
-    FailureMode failureModeResourceToEntity(FailureModeResource failureModeResource);
-
+    FailureMode toFailureMode(FailureModeResource failureModeResource, @Context CycleAvoidingMappingContext context);
 
 }

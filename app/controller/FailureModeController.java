@@ -1,17 +1,18 @@
 package controller;
 
+import static java.util.stream.Collectors.toList;
+import static util.FailureModeUtil.extractFailureModeResourceFromJson;
+
+import java.util.concurrent.CompletionStage;
+
+import javax.inject.Inject;
+
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
 import service.FailureModeService;
-
-import javax.inject.Inject;
-import java.util.concurrent.CompletionStage;
-
-import static java.util.stream.Collectors.toList;
-import static util.FailureModeUtil.extractFailureModeResourceFromJson;
 
 public class FailureModeController extends Controller {
 
@@ -45,6 +46,4 @@ public class FailureModeController extends Controller {
         return service.update(id, extractFailureModeResourceFromJson(request())).thenApplyAsync(optionalFailureMode ->
                 optionalFailureMode.map(failureMode -> ok(Json.toJson(failureMode))).orElseGet(Results::notFound));
     }
-
-
 }

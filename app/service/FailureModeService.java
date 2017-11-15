@@ -1,18 +1,20 @@
 package service;
 
-import model.database.FailureMode;
-import model.database.Tag;
-import model.presentation.FailureModeResource;
-import play.libs.concurrent.HttpExecutionContext;
-import repository.FailureModeRepository;
+import static mapper.FailureModeMapper.INSTANCE;
 
-import javax.inject.Inject;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static mapper.FailureModeMapper.INSTANCE;
+import javax.inject.Inject;
+
+import mapper.CycleAvoidingMappingContext;
+import model.database.FailureMode;
+import model.database.Tag;
+import model.presentation.FailureModeResource;
+import play.libs.concurrent.HttpExecutionContext;
+import repository.FailureModeRepository;
 
 public class FailureModeService {
 
@@ -20,6 +22,8 @@ public class FailureModeService {
     private FailureModeRepository repository;
     @Inject
     private HttpExecutionContext executionContext;
+    @Inject
+    private CycleAvoidingMappingContext mappingContext;
 
     public CompletionStage<Stream<FailureModeResource>> findAll() {
         return repository.findAll().thenApplyAsync(failureModeStream -> failureModeStream.map(convertToResource()),
@@ -32,11 +36,11 @@ public class FailureModeService {
     }
 
     public CompletionStage<FailureModeResource> create(FailureModeResource resource) {
-        return repository.create(INSTANCE.failureModeResourceToEntity(resource)).thenApplyAsync(convertToResource());
+        return repository.create(INSTANCE.toFailureMode(resource, mappingContext)).thenApplyAsync(convertToResource());
     }
 
     public CompletionStage<Optional<FailureModeResource>> update(Long id, FailureModeResource resource) {
-        return repository.update(id, INSTANCE.failureModeResourceToEntity(resource)).thenApplyAsync(optionalFailureMode ->
+        return repository.update(id, INSTANCE.toFailureMode(resource, mappingContext)).thenApplyAsync(optionalFailureMode ->
                 optionalFailureMode.map(convertToResource()));
     }
 
@@ -45,7 +49,7 @@ public class FailureModeService {
     }
 
     private Function<FailureMode, FailureModeResource> convertToResource() {
-        return failureMode -> INSTANCE.failureModeEntityToResource(failureMode);
+        return failureMode -> INSTANCE.toFailureModeResource(failureMode, mappingContext);
     }
 
 }

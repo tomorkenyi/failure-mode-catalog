@@ -1,5 +1,16 @@
 package controller;
 
+import static play.mvc.Controller.request;
+import static play.mvc.Results.ok;
+import static util.TagUtil.extractTagResourceFromJson;
+
+import java.util.Optional;
+import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
+
+import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
+
 import model.database.Tag;
 import model.presentation.FailureModeResource;
 import play.Logger;
@@ -10,15 +21,6 @@ import play.mvc.Results;
 import service.FailureModeService;
 import service.TagService;
 
-import javax.inject.Inject;
-import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
-import java.util.concurrent.CompletionStage;
-import java.util.function.Function;
-
-import static play.mvc.Controller.request;
-import static util.TagUtil.extractTagResourceFromJson;
-
 public class TagController {
 
     @Inject
@@ -28,9 +30,12 @@ public class TagController {
     @Inject
     private HttpExecutionContext executionContext;
 
-
-    public Result search(String tag) {
-        return play.mvc.Results.TODO;
+    public CompletionStage<Result> search(String tag) {
+        return tagService
+                .search(tag)
+                .thenApplyAsync(optionalTagResource ->
+                        optionalTagResource.map(tagResource ->
+                                ok(Json.toJson(tagResource))).orElseGet(Results::notFound));
     }
 
 

@@ -1,23 +1,29 @@
 package model.database;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import java.util.ArrayList;
-import java.util.List;
-
 import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.GenerationType.AUTO;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
+
+import lombok.Getter;
+import lombok.Setter;
+
 @Getter
 @Setter
 @Entity
+@NamedQuery(name = Tag.FIND_BY_TEXT, query = "SELECT DISTINCT t FROM Tag t WHERE t.text = :ptext")
 public class Tag {
+
+    public static final String FIND_BY_TEXT = "Tag.findByText";
 
     @Id
     @GeneratedValue(strategy = AUTO)
@@ -27,7 +33,7 @@ public class Tag {
 
     private String colorCode;
 
-    @ManyToMany(mappedBy = "tags", cascade = {PERSIST, MERGE})
-    private List<FailureMode> failureModes = new ArrayList<>();
+    @ManyToMany(mappedBy = "tags", cascade = {PERSIST, MERGE}, fetch = FetchType.EAGER)
+    private Set<FailureMode> failureModes = new HashSet<>();
 
 }

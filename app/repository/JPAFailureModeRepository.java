@@ -1,24 +1,27 @@
 package repository;
 
-import concurrent.FailureModeCatalogExecutionContext;
-import model.database.FailureMode;
-import model.database.Tag;
-import play.db.jpa.JPAApi;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static model.database.FailureMode.FIND_ALL;
+import static model.database.FailureMode.FIND_BY_ID;
+
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletionStage;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletionStage;
-import java.util.stream.Stream;
 
-import static java.util.Objects.nonNull;
-import static java.util.Optional.*;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static model.database.FailureMode.FIND_ALL;
-import static model.database.FailureMode.FIND_BY_ID;
+import concurrent.FailureModeCatalogExecutionContext;
+import model.database.FailureMode;
+import model.database.Tag;
+import play.db.jpa.JPAApi;
 
 @Singleton
 public class JPAFailureModeRepository implements FailureModeRepository {
@@ -70,7 +73,7 @@ public class JPAFailureModeRepository implements FailureModeRepository {
         return supplyAsync(() -> jpaApi.withTransaction(em -> {
             FailureMode failureMode = em.find(FailureMode.class, id);
             if (failureMode != null) {
-                List<Tag> tags = failureMode.getTags();
+                Set<Tag> tags = failureMode.getTags();
                 tags.add(tag);
                 failureMode.setTags(tags);
                 em.merge(failureMode);
