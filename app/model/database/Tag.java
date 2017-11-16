@@ -13,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +22,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@NamedQuery(name = Tag.FIND_BY_TEXT, query = "SELECT DISTINCT t FROM Tag t WHERE t.text = :ptext")
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"text"})})
+@NamedQuery(name = Tag.FIND_BY_TEXT, query = "SELECT t FROM Tag t WHERE t.text = :ptext")
 public class Tag {
 
     public static final String FIND_BY_TEXT = "Tag.findByText";
