@@ -1,0 +1,1 @@
+web: target/universal/stage/bin/failure-mode-catalog -Dhttp.port=$PORT -Ddb.default.url=${DATABASE_URL} -Ddb.default.username=${DATABASE_USER} -Ddb.default.password=${DATABASE_PASSWORD} -Dconfig.resource=production.conf

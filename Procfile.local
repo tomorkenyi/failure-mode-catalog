@@ -1,0 +1,1 @@
+web: target/universal/stage/bin/failure-mode-catalog -Dhttp.port=$PORT -Ddb.default.url="jdbc:mysql://localhost/failuremodecatalog?autoReconnect=true&useSSL=false" -Ddb.default.username="user" -Ddb.default.password="pw" -Dplay.http.secret.key='secretkey'
