@@ -1,27 +1,22 @@
 package repository;
 
-import static java.util.Objects.nonNull;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static model.database.FailureMode.FIND_ALL;
-import static model.database.FailureMode.FIND_BY_ID;
+import concurrent.FailureModeCatalogExecutionContext;
+import model.database.FailureMode;
+import model.database.Tag;
+import play.db.jpa.JPAApi;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.persistence.EntityManager;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
-import concurrent.FailureModeCatalogExecutionContext;
-import model.database.FailureMode;
-import model.database.Tag;
-import play.db.jpa.JPAApi;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static model.database.FailureMode.FIND_ALL;
 
 @Singleton
 public class JPAFailureModeRepository implements FailureModeRepository {
@@ -38,7 +33,7 @@ public class JPAFailureModeRepository implements FailureModeRepository {
 
     @Override
     public CompletionStage<Optional<FailureMode>> findById(Long id) {
-        return supplyAsync(() -> jpaApi.withTransaction(em -> selectById(em, id)), executionContext);
+        return supplyAsync(() -> jpaApi.withTransaction(em -> of(em.find(FailureMode.class, id))), executionContext);
     }
 
     @Override
@@ -84,12 +79,5 @@ public class JPAFailureModeRepository implements FailureModeRepository {
 
     private Stream<FailureMode> selectAll(EntityManager em) {
         return em.createNamedQuery(FIND_ALL, FailureMode.class).getResultList().stream();
-    }
-
-    private Optional<FailureMode> selectById(EntityManager em, Long id) {
-        TypedQuery<FailureMode> typedQuery = em.createNamedQuery(FIND_BY_ID, FailureMode.class);
-        typedQuery.setParameter("pid", id);
-        FailureMode singleResult = typedQuery.getSingleResult();
-        return nonNull(singleResult) ? of(singleResult) : empty();
     }
 }

@@ -2,10 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET         /                         controller.FailureModeController.index
-GET         /failures                 controller.FailureModeController.list
-POST        /failures                 controller.FailureModeController.create
-GET         /failures/:id             controller.FailureModeController.get(id: Long)
-POST        /failures/:id             controller.FailureModeController.update(id: Long)
-POST        /failures/:id/tags        controller.TagController.create(id: Long)
-GET         /_search                  controller.TagController.search(tag)
+GET           /                                           controller.HomeController.index
+GET           /failures                                   controller.FailureModeController.list
+POST          /failures                                   controller.FailureModeController.create
+GET           /failures/:failureModeId                    controller.FailureModeController.get(failureModeId: Long)
+POST          /failures/:failureModeId                    controller.FailureModeController.update(failureModeId: Long)
+POST          /failures/:failureModeId/tags               controller.TagController.create(failureModeId: Long)
+GET           /_search                                    controller.TagController.search(tag)
+DELETE        /failures/:failureModeId/tags/:tagId        controller.TagController.delete(failureModeId: Long, tagId: Long)

@@ -1,16 +1,5 @@
 package controller;
 
-import static play.mvc.Controller.request;
-import static play.mvc.Results.ok;
-import static util.TagUtil.extractTagResourceFromJson;
-
-import java.util.Optional;
-import java.util.concurrent.CompletionStage;
-import java.util.function.Function;
-
-import javax.inject.Inject;
-import javax.persistence.EntityNotFoundException;
-
 import model.database.Tag;
 import model.presentation.FailureModeResource;
 import play.Logger;
@@ -21,6 +10,14 @@ import play.mvc.Results;
 import service.FailureModeService;
 import service.TagService;
 
+import javax.inject.Inject;
+import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
+
+import static play.mvc.Controller.request;
+import static play.mvc.Results.ok;
+import static util.TagUtil.extractTagResourceFromJson;
+
 public class TagController {
 
     @Inject
@@ -30,32 +27,12 @@ public class TagController {
     @Inject
     private HttpExecutionContext executionContext;
 
-    public CompletionStage<Result> search(String tag) {
-        return tagService
-                .search(tag)
-                .thenApplyAsync(optionalTagResource ->
-                        optionalTagResource.map(tagResource ->
-                                ok(Json.toJson(tagResource))).orElseGet(Results::notFound));
-    }
-
-
     public CompletionStage<Result> create(Long failureModeId) {
-        return failureModeService
-                .findById(failureModeId)
-                .thenApplyAsync(createAndAddTag(), executionContext.current())
-                .thenComposeAsync(getResult(), executionContext.current());
-    }
-
-    private Function<Optional<FailureModeResource>, CompletionStage<FailureModeResource>> createAndAddTag() {
-        return optionalFailureModeResource ->
-                optionalFailureModeResource.map(failureModeResource ->
-                        createTag().thenComposeAsync(
-                                addTag(failureModeResource))).orElseThrow(EntityNotFoundException::new);
-    }
-
-    private CompletionStage<Tag> createTag() {
-        Logger.debug("Creating tag from request: " + request().body().asText());
-        return tagService.create(extractTagResourceFromJson(request()));
+        return tagService.create(failureModeId, extractTagResourceFromJson(request()))
+                .thenApplyAsync(optionalTag ->
+                        optionalTag.map(tag ->
+                                ok(Json.toJson(tag))).orElseGet(() ->
+                                Results.internalServerError("FailureMode not found with id: " + failureModeId)));
     }
 
     private Function<Tag, CompletionStage<FailureModeResource>> addTag(FailureModeResource failureModeResource) {
@@ -69,5 +46,21 @@ public class TagController {
         Logger.debug("Get the result of adding tag to failuremode and making a JSON response out of it");
         return completionStage -> completionStage.thenApplyAsync(failureModeResource ->
                 Results.created(Json.toJson(failureModeResource)));
+    }
+
+    public CompletionStage<Result> search(String tag) {
+        return tagService
+                .search(tag)
+                .thenApplyAsync(optionalTagResource ->
+                        optionalTagResource.map(tagResource ->
+                                ok(Json.toJson(tagResource))).orElseGet(Results::notFound));
+    }
+
+
+    public CompletionStage<Result> delete(Long failureModeId, Long tagId) {
+        return tagService
+                .delete(failureModeId, tagId)
+                .thenApplyAsync(aVoid -> ok("Tag " + tagId + " is removed from " + failureModeId));
+
     }
 }

@@ -1,22 +1,24 @@
 package repository;
 
-import static java.util.Objects.nonNull;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static model.database.Tag.FIND_BY_TEXT;
-
-import java.util.Optional;
-import java.util.concurrent.CompletionStage;
+import concurrent.FailureModeCatalogExecutionContext;
+import model.database.FailureMode;
+import model.database.Tag;
+import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletionStage;
 
-import concurrent.FailureModeCatalogExecutionContext;
-import model.database.Tag;
-import play.db.jpa.JPAApi;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static model.database.Tag.FIND_BY_TEXT;
 
 @Singleton
 public class JPATagRepository implements TagRepository {
@@ -27,19 +29,55 @@ public class JPATagRepository implements TagRepository {
     private FailureModeCatalogExecutionContext executionContext;
 
     @Override
-    public CompletionStage<Tag> create(Tag tag) {
-        return supplyAsync(() -> jpaApi.withTransaction(em -> em.merge(tag)), executionContext);
+    public CompletionStage<Optional<Tag>> create(Long failureModeId, Tag tag) {
+        return supplyAsync(() -> jpaApi.withTransaction(em -> {
+            FailureMode failureMode = em.find(FailureMode.class, failureModeId);
+            return addTag(tag, em, failureMode);
+        }), executionContext);
     }
 
     @Override
     public CompletionStage<Optional<Tag>> search(String text) {
-        return supplyAsync(() -> jpaApi.withTransaction(em -> selectById(em, text)), executionContext);
+        return supplyAsync(() -> jpaApi.withTransaction(em -> selectByTagText(em, text)), executionContext);
     }
 
-    private Optional<Tag> selectById(EntityManager em, String text) {
+    @Override
+    public CompletionStage<Void> delete(Long failureModeId, Long tagId) {
+        return supplyAsync(() -> jpaApi.withTransaction(em -> {
+            removeTag(failureModeId, tagId, em);
+            return null;
+        }));
+    }
+
+    private Optional<Tag> selectByTagText(EntityManager em, String text) {
         TypedQuery<Tag> typedQuery = em.createNamedQuery(FIND_BY_TEXT, Tag.class);
         typedQuery.setParameter("ptext", text);
         Tag singleResult = typedQuery.getSingleResult();
         return nonNull(singleResult) ? of(singleResult) : empty();
+    }
+
+    private Optional<Tag> addTag(Tag tag, EntityManager em, FailureMode failureMode) {
+        if (isNull(failureMode)) {
+            return empty();
+        } else {
+            Set<Tag> tags = failureMode.getTags();
+            tags.add(tag);
+            failureMode.setTags(tags);
+            em.merge(failureMode);
+
+            return of(tag);
+        }
+    }
+
+    private void removeTag(Long failureModeId, Long tagId, EntityManager em) {
+        FailureMode failureMode = em.find(FailureMode.class, failureModeId);
+        Tag tag = em.find(Tag.class, tagId);
+
+        if (nonNull(failureMode) && nonNull(tag)) {
+            final Set<Tag> tags = failureMode.getTags();
+            tags.remove(tag);
+            failureMode.setTags(tags);
+            em.remove(tag);
+        }
     }
 }
