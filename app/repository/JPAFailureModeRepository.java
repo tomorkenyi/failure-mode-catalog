@@ -57,7 +57,6 @@ public class JPAFailureModeRepository implements FailureModeRepository {
                 data.setResponseAction(failureMode.getResponseAction());
                 data.setSafetyConcern(failureMode.getSafetyConcern());
                 data.setServiceEffect(failureMode.getServiceEffect());
-                data.setTags(failureMode.getTags());
             }
             return ofNullable(data);
         }));

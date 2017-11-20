@@ -60,7 +60,8 @@ public class TagController {
     public CompletionStage<Result> delete(Long failureModeId, Long tagId) {
         return tagService
                 .delete(failureModeId, tagId)
-                .thenApplyAsync(aVoid -> ok("Tag " + tagId + " is removed from " + failureModeId));
+                .thenApplyAsync(aVoid ->
+                        ok("Tag with id: " + tagId + " is removed from failure mode: " + failureModeId));
 
     }
 }

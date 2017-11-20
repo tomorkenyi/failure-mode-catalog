@@ -6,7 +6,7 @@ GET           /                                           controller.HomeControl
 GET           /failures                                   controller.FailureModeController.list
 POST          /failures                                   controller.FailureModeController.create
 GET           /failures/:failureModeId                    controller.FailureModeController.get(failureModeId: Long)
-POST          /failures/:failureModeId                    controller.FailureModeController.update(failureModeId: Long)
+PUT           /failures/:failureModeId                    controller.FailureModeController.update(failureModeId: Long)
 POST          /failures/:failureModeId/tags               controller.TagController.create(failureModeId: Long)
 GET           /_search                                    controller.TagController.search(tag)
 DELETE        /failures/:failureModeId/tags/:tagId        controller.TagController.delete(failureModeId: Long, tagId: Long)

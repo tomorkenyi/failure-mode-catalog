@@ -8,6 +8,7 @@ import play.db.jpa.JPAApi;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.TypedQuery;
 import java.util.Optional;
 import java.util.Set;
@@ -73,11 +74,14 @@ public class JPATagRepository implements TagRepository {
         FailureMode failureMode = em.find(FailureMode.class, failureModeId);
         Tag tag = em.find(Tag.class, tagId);
 
-        if (nonNull(failureMode) && nonNull(tag)) {
+        if (isNull(failureMode) || isNull(tag)) {
+            throw new EntityNotFoundException(
+                    "Tag with id: " + tagId + " cannot be removed from failure mode: " + failureModeId);
+        } else {
             final Set<Tag> tags = failureMode.getTags();
             tags.remove(tag);
             failureMode.setTags(tags);
-            em.remove(tag);
+            em.merge(failureMode);
         }
     }
 }
