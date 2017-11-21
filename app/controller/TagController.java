@@ -1,6 +1,5 @@
 package controller;
 
-import model.database.Tag;
 import model.presentation.FailureModeResource;
 import play.Logger;
 import play.libs.Json;
@@ -33,13 +32,6 @@ public class TagController {
                         optionalTag.map(tag ->
                                 ok(Json.toJson(tag))).orElseGet(() ->
                                 Results.internalServerError("FailureMode not found with id: " + failureModeId)));
-    }
-
-    private Function<Tag, CompletionStage<FailureModeResource>> addTag(FailureModeResource failureModeResource) {
-        return tag -> {
-            Logger.debug("Add tag: " + tag + " to failure mode: " + failureModeResource);
-            return failureModeService.addTag(failureModeResource.getId(), tag);
-        };
     }
 
     private Function<CompletionStage<FailureModeResource>, CompletionStage<Result>> getResult() {
