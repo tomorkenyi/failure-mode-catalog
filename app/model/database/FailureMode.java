@@ -2,28 +2,19 @@ package model.database;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Version;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-
-import static javax.persistence.CascadeType.MERGE;
-import static javax.persistence.CascadeType.PERSIST;
-import static javax.persistence.GenerationType.AUTO;
 
 @Getter
 @Setter
 @Entity
-@NamedQueries({
-        @NamedQuery(name = FailureMode.FIND_BY_ID, query = "SELECT DISTINCT fm FROM FailureMode fm WHERE fm.id = :pid"),
-        @NamedQuery(name = FailureMode.FIND_ALL, query = "SELECT DISTINCT fm FROM FailureMode fm")
-})
 public class FailureMode {
-    public static final String FIND_BY_ID = "FailureMode.findById";
-    public static final String FIND_ALL = "FailureMode.findAll";
 
     @Id
-    @GeneratedValue(strategy = AUTO)
     private Long id;
 
     private String functionalState;
@@ -51,11 +42,6 @@ public class FailureMode {
 
     private Long lastUpdated;
 
-    @ManyToMany(cascade = {PERSIST, MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(name = "FailureModeTags",
-            joinColumns = {@JoinColumn(name = "failureMode_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "tag_id", referencedColumnName = "id")}
-    )
     private Set<Tag> tags = new HashSet<>();
 
 }

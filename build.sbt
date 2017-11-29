@@ -9,13 +9,12 @@ scalaVersion := "2.12.4"
 
 libraryDependencies ++= Seq(
   guice,
-  javaJpa,
-  "org.hibernate" % "hibernate-entitymanager" % "5.2.12.Final",
-  "mysql" % "mysql-connector-java" % "6.0.6",
   "org.mapstruct" % "mapstruct-jdk8" % "1.2.0.Final",
   "org.mapstruct" % "mapstruct-processor" % "1.2.0.Final",
   "org.projectlombok" % "lombok" % "1.16.18" % "provided",
-  "org.assertj" % "assertj-core" % "3.8.0" % "test"
+  "org.assertj" % "assertj-core" % "3.8.0" % "test",
+  "org.mongodb" % "mongodb-driver-rx" % "1.5.0",
+  "org.mongodb.morphia" % "morphia" % "1.3.2"
 )
 
 // Since Play 2.4 the contents of the conf directory are added to the classpath by default.
