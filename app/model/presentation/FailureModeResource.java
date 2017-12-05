@@ -2,18 +2,19 @@ package model.presentation;
 
 import java.util.Set;
 
+import org.bson.types.ObjectId;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class FailureModeResource {
 
-    private Long id;
+    private ObjectId id;
 
     private String functionalState;
 
@@ -34,6 +35,9 @@ public class FailureModeResource {
     private Integer detectability;
 
     private Boolean safetyConcern;
+
+    @JsonIgnore
+    private Long version;
 
     private Long lastUpdated;
 

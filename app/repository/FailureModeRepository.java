@@ -1,19 +1,20 @@
 package repository;
 
+import com.mongodb.rx.client.Success;
 import model.database.FailureMode;
 import model.database.Tag;
+import rx.Observable;
 
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
-import java.util.stream.Stream;
 
 public interface FailureModeRepository {
 
-    CompletionStage<Stream<FailureMode>> findAll();
+    Observable<FailureMode> findAll();
 
     CompletionStage<Optional<FailureMode>> findById(Long id);
 
-    CompletionStage<FailureMode> create(FailureMode failureMode);
+    Observable<Success> create(FailureMode failureMode);
 
     CompletionStage<Optional<FailureMode>> update(Long id, FailureMode failureMode);
 

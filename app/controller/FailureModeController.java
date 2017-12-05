@@ -1,30 +1,28 @@
 package controller;
 
+import static util.FailureModeUtil.extractFailureModeResourceFromJson;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
+import javax.inject.Inject;
+
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
+import rx.Observable;
 import service.FailureModeService;
-
-import javax.inject.Inject;
-import java.util.concurrent.CompletionStage;
-
-import static java.util.stream.Collectors.toList;
-import static util.FailureModeUtil.extractFailureModeResourceFromJson;
 
 public class FailureModeController extends Controller {
 
     @Inject
     private FailureModeService service;
+
     @Inject
     private HttpExecutionContext executionContext;
-
-    public CompletionStage<Result> list() {
-        return service.findAll().thenApplyAsync(failureModeStream ->
-                ok(Json.toJson(failureModeStream.collect(toList()))), executionContext.current()
-        );
-    }
 
     public CompletionStage<Result> get(Long failureModeId) {
         return service.findById(failureModeId).thenApplyAsync(optionalFailureModeResource ->
@@ -40,5 +38,20 @@ public class FailureModeController extends Controller {
     public CompletionStage<Result> update(Long failureModeId) {
         return service.update(failureModeId, extractFailureModeResourceFromJson(request())).thenApplyAsync(optionalFailureMode ->
                 optionalFailureMode.map(failureMode -> ok(Json.toJson(failureMode))).orElseGet(Results::notFound));
+    }
+
+    public CompletionStage<Result> list() {
+        return fromObservable(service.findAll())
+                .thenApplyAsync(failureModeResources ->
+                        ok(Json.toJson(failureModeResources)), executionContext.current());
+    }
+
+    private static <T> CompletableFuture<List<T>> fromObservable(Observable<T> observable) {
+        final CompletableFuture<List<T>> future = new CompletableFuture<>();
+        observable
+                .doOnError(future::completeExceptionally)
+                .toList()
+                .forEach(future::complete);
+        return future;
     }
 }

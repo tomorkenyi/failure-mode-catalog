@@ -9,12 +9,13 @@ scalaVersion := "2.12.4"
 
 libraryDependencies ++= Seq(
   guice,
+  "org.mongodb" % "mongodb-driver-rx" % "1.5.0",
+  "org.mongodb.morphia" % "morphia" % "1.3.2",
+  "io.reactivex" % "rxjava-reactive-streams" % "1.2.1",
   "org.mapstruct" % "mapstruct-jdk8" % "1.2.0.Final",
   "org.mapstruct" % "mapstruct-processor" % "1.2.0.Final",
   "org.projectlombok" % "lombok" % "1.16.18" % "provided",
-  "org.assertj" % "assertj-core" % "3.8.0" % "test",
-  "org.mongodb" % "mongodb-driver-rx" % "1.5.0",
-  "org.mongodb.morphia" % "morphia" % "1.3.2"
+  "org.assertj" % "assertj-core" % "3.8.0" % "test"
 )
 
 // Since Play 2.4 the contents of the conf directory are added to the classpath by default.

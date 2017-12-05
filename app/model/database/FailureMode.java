@@ -1,7 +1,7 @@
 package model.database;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Version;
@@ -9,13 +9,12 @@ import org.mongodb.morphia.annotations.Version;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
 @Entity
+@Data
 public class FailureMode {
 
     @Id
-    private Long id;
+    private ObjectId id;
 
     private String functionalState;
 
