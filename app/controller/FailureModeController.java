@@ -8,12 +8,19 @@ import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 
+import org.reactivestreams.Publisher;
+
+import akka.NotUsed;
+import akka.stream.javadsl.Source;
+import akka.util.ByteString;
+import model.presentation.FailureModeResource;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
 import rx.Observable;
+import rx.RxReactiveStreams;
 import service.FailureModeService;
 
 public class FailureModeController extends Controller {
@@ -40,10 +47,16 @@ public class FailureModeController extends Controller {
                 optionalFailureMode.map(failureMode -> ok(Json.toJson(failureMode))).orElseGet(Results::notFound));
     }
 
-    public CompletionStage<Result> list() {
-        return fromObservable(service.findAll())
-                .thenApplyAsync(failureModeResources ->
-                        ok(Json.toJson(failureModeResources)), executionContext.current());
+    public Result list() {
+
+        Publisher<FailureModeResource> publisher = RxReactiveStreams.toPublisher(service.findAll());
+        Source<ByteString, NotUsed> source = Source.fromPublisher(publisher).map(o -> ByteString.fromString(o.toString()));
+
+        return ok().chunked(source).as("application/json");
+
+        //        return fromObservable(service.findAll())
+        //                .thenApplyAsync(failureModeResources ->
+        //                        ok(Json.toJson(failureModeResources)), executionContext.current());
     }
 
     private static <T> CompletableFuture<List<T>> fromObservable(Observable<T> observable) {

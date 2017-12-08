@@ -1,5 +1,14 @@
 package service;
 
+import static mapper.FailureModeMapper.INSTANCE;
+
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
+
+import javax.inject.Inject;
+
 import akka.actor.ActorSystem;
 import mapper.CycleAvoidingMappingContext;
 import model.database.FailureMode;
@@ -7,13 +16,6 @@ import model.presentation.FailureModeResource;
 import play.libs.concurrent.HttpExecutionContext;
 import repository.FailureModeRepository;
 import rx.Observable;
-
-import javax.inject.Inject;
-import java.util.Optional;
-import java.util.concurrent.CompletionStage;
-import java.util.function.Function;
-
-import static mapper.FailureModeMapper.INSTANCE;
 
 public class FailureModeService {
 
@@ -37,12 +39,11 @@ public class FailureModeService {
     }
 
     public CompletionStage<FailureModeResource> create(FailureModeResource resource) {
-//        repository
-//                .create(INSTANCE.toFailureMode(resource, mappingContext))
-//                .subscribe(success -> System.out.println("Insertion completed: " + resource));
-//
-//        return CompletableFuture.supplyAsync(() -> resource);
-        return null;
+        repository
+                .create(INSTANCE.toFailureMode(resource, mappingContext))
+                .subscribe(success -> System.out.println("Insertion completed: " + resource));
+
+        return CompletableFuture.supplyAsync(() -> resource);
     }
 
     public CompletionStage<Optional<FailureModeResource>> update(Long id, FailureModeResource resource) {
